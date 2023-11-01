@@ -204,13 +204,9 @@ module.exports = (() => {
 				}
 				
 				patchChannelList(){
-					const ChannelItem = WebpackModules.getModule((m) =>
-					["canHaveDot", "unreadRelevant", "UNREAD_HIGHLIGHT"].every((s) =>
-					  m?.Z?.toString().includes(s)
-					)
-				  );
+					const ChannelItem = WebpackModules.getModule(x=>x.ChannelItemIcon)
 					const ChannelTypes = {GUILD_TEXT: 15}
-					Patcher.after(ChannelItem, "Z", (_, [props], returnValue) => {
+					Patcher.after(ChannelItem, "default", (_, [props], returnValue) => {
 						if(props.selected) return;
 						if(props.muted && !this.settings.includeMuted) return;
 						const selfId = UserStore.getCurrentUser()?.id;
@@ -252,6 +248,7 @@ module.exports = (() => {
 				
 				// this still doesnt work but it was an attempt to fix it and im too lazy to undo it for release
 				// Yeah it isnt gonna work for now. Will rework later with better result
+				// tried earlier when fixing. still couldnt figure it out :(
 				patchGuildList(promiseState){
 					const result = (target => target ? [target, Object.keys(target).find(k => ['includeActivity', 'onBlur'].every(s => target[k]?.toString?.().includes(s)))] : [])(WebpackModules.getModule(m => Object.values(m).some(m => ['includeActivity', 'onBlur'].every(s => m?.toString?.().includes(s))), {searchGetters: false}));
 					const selfId = UserStore.getCurrentUser()?.id;
